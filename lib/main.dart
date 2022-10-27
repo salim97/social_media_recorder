@@ -39,6 +39,9 @@ class _MyHomePageState extends State<MyHomePage> {
           child: Align(
             alignment: Alignment.centerRight,
             child: SocialMediaRecorder(
+              startRecording: () {},
+              stopRecording: () {},
+              cancelEvent: () {},
               sendRequestFunction: (soundFile) {
                 // print("the current path is ${soundFile.path}");
               },

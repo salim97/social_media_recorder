@@ -63,11 +63,23 @@ class SoundRecordNotifier extends ChangeNotifier {
   late bool lockScreenRecord;
   late String mPath;
   late AudioEncoderType encode;
+
+  /// startRecording
+  final Function startRecording;
+
+  /// startRecording
+  final Function stopRecording;
+
+  /// startRecording
+  final Function cancelEvent;
   // ignore: sort_constructors_first
   SoundRecordNotifier({
     this.edge = 0.0,
     this.minute = 0,
     this.second = 0,
+    required this.startRecording,
+    required this.stopRecording,
+    required this.cancelEvent,
     this.buttonPressed = false,
     this.loopActive = false,
     this.mPath = '',
@@ -86,7 +98,7 @@ class SoundRecordNotifier extends ChangeNotifier {
   }
 
   /// used to reset all value to initial value when end the record
-  resetEdgePadding() async {
+  resetEdgePadding({bool sendStopRecordingEvent = true }) async {
     isLocked = false;
     edge = 0;
     buttonPressed = false;
@@ -98,15 +110,13 @@ class SoundRecordNotifier extends ChangeNotifier {
     lockScreenRecord = false;
     if (_timer != null) _timer!.cancel();
     if (_timerCounter != null) _timerCounter!.cancel();
-    recordMp3.stop();
+    // recordMp3.stop();
+    if(sendStopRecordingEvent)stopRecording();
     notifyListeners();
   }
 
   String _getSoundExtention() {
-    if (encode == AudioEncoderType.AAC ||
-        encode == AudioEncoderType.AAC_LD ||
-        encode == AudioEncoderType.AAC_HE ||
-        encode == AudioEncoderType.OPUS) {
+    if (encode == AudioEncoderType.AAC || encode == AudioEncoderType.AAC_LD || encode == AudioEncoderType.AAC_HE || encode == AudioEncoderType.OPUS) {
       return ".m4a";
     } else {
       return ".3gp";
@@ -118,13 +128,9 @@ class SoundRecordNotifier extends ChangeNotifier {
     String _sdPath = "";
     if (Platform.isIOS) {
       Directory tempDir = await getTemporaryDirectory();
-      _sdPath = initialStorePathRecord.isEmpty
-          ? tempDir.path
-          : initialStorePathRecord;
+      _sdPath = initialStorePathRecord.isEmpty ? tempDir.path : initialStorePathRecord;
     } else {
-      _sdPath = initialStorePathRecord.isEmpty
-          ? "/storage/emulated/0/new_record_sound"
-          : initialStorePathRecord;
+      _sdPath = initialStorePathRecord.isEmpty ? "/storage/emulated/0/new_record_sound" : initialStorePathRecord;
     }
     var d = Directory(_sdPath);
     if (!d.existsSync()) {
@@ -171,7 +177,8 @@ class SoundRecordNotifier extends ChangeNotifier {
         RenderBox box = key.currentContext?.findRenderObject() as RenderBox;
         Offset position = box.localToGlobal(Offset.zero);
         if (position.dx <= MediaQuery.of(context).size.width * 0.6) {
-          resetEdgePadding();
+          cancelEvent();
+          resetEdgePadding(sendStopRecordingEvent: false);
         } else if (x.dx >= MediaQuery.of(context).size.width) {
           edge = 0;
           edge = 0;
@@ -217,20 +224,15 @@ class SoundRecordNotifier extends ChangeNotifier {
 
   /// this function to start record voice
   record() async {
-    if (!_isAcceptedPermission) {
-      await Permission.microphone.request();
-      await Permission.manageExternalStorage.request();
-      await Permission.storage.request();
-      _isAcceptedPermission = true;
-    } else {
-      buttonPressed = true;
-      String recordFilePath = await getFilePath();
-      _timer = Timer(const Duration(milliseconds: 900), () {
-        recordMp3.start(path: recordFilePath);
-      });
-      _mapCounterGenerater();
-      notifyListeners();
-    }
+    buttonPressed = true;
+    // String recordFilePath = await getFilePath();
+    // _timer = Timer(const Duration(milliseconds: 900), () {
+    //   recordMp3.start(path: recordFilePath);
+    // });
+    startRecording();
+    _mapCounterGenerater();
+    notifyListeners();
+
     notifyListeners();
   }
 
