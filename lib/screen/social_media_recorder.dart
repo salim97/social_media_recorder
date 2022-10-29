@@ -207,7 +207,8 @@ class _SocialMediaRecorder extends State<SocialMediaRecorder> {
                 ),
                 child: Stack(
                   children: [
-                    ShowMicWithText(
+                    Center(
+                        child: ShowMicWithText(
                       counterBackGroundColor: widget.counterBackGroundColor,
                       backGroundColor: widget.recordIconBackGroundColor,
                       recordIcon: widget.recordIcon,
@@ -215,19 +216,20 @@ class _SocialMediaRecorder extends State<SocialMediaRecorder> {
                       soundRecorderState: state,
                       slideToCancelTextStyle: widget.slideToCancelTextStyle,
                       slideToCancelText: widget.slideToCancelText,
-                    ),
+                    )),
                     if (soundRecordNotifier.isShow) ShowCounter(counterBackGroundColor: widget.counterBackGroundColor, soundRecorderState: state),
                   ],
                 ),
               ),
             ),
-            SizedBox(
-              width: 60,
-              child: LockRecord(
-                soundRecorderState: state,
-                lockIcon: widget.lockButton,
-              ),
-            )
+            // the lock functionality doesn't work properly
+            // SizedBox(
+            //   width: 60,
+            //   child: LockRecord(
+            //     soundRecorderState: state,
+            //     lockIcon: widget.lockButton,
+            //   ),
+            // )
           ],
         ),
       ),
