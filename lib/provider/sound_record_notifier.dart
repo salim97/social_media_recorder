@@ -1,13 +1,14 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
+import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:record/record.dart';
 import 'package:social_media_recorder/audio_encoder_type.dart';
 import 'package:uuid/uuid.dart';
 
-class SoundRecordNotifier extends ChangeNotifier {
+class SoundRecordNotifier extends GetxController {
   GlobalKey key = GlobalKey();
 
   /// This Timer Just For wait about 1 second until starting record
@@ -88,6 +89,14 @@ class SoundRecordNotifier extends ChangeNotifier {
     this.lockScreenRecord = false,
     this.encode = AudioEncoderType.AAC,
   });
+  @override
+  void onInit() {
+    // initialStorePathRecord = storeSoundRecoringPath ?? "";
+    initialStorePathRecord = "";
+    isShow = false;
+    voidInitialSound();
+    super.onInit();
+  }
 
   /// To increase counter after 1 sencond
   void _mapCounterGenerater() {
@@ -98,7 +107,7 @@ class SoundRecordNotifier extends ChangeNotifier {
   }
 
   /// used to reset all value to initial value when end the record
-  resetEdgePadding({bool sendStopRecordingEvent = true }) async {
+  resetEdgePadding({bool sendStopRecordingEvent = true}) async {
     isLocked = false;
     edge = 0;
     buttonPressed = false;
@@ -111,8 +120,8 @@ class SoundRecordNotifier extends ChangeNotifier {
     if (_timer != null) _timer!.cancel();
     if (_timerCounter != null) _timerCounter!.cancel();
     // recordMp3.stop();
-    if(sendStopRecordingEvent)stopRecording();
-    notifyListeners();
+    if (sendStopRecordingEvent) stopRecording();
+    update();
   }
 
   String _getSoundExtention() {
@@ -164,12 +173,12 @@ class SoundRecordNotifier extends ChangeNotifier {
         isLocked = true;
         lockScreenRecord = true;
         hightValue = 50;
-        notifyListeners();
+        update();
       }
       if (hightValue < 0) hightValue = 0;
       heightPosition = hightValue;
       lockScreenRecord = isLocked;
-      notifyListeners();
+      update();
 
       /// this operation for update X oriantation
       /// draggable to the left or right place
@@ -196,7 +205,7 @@ class SoundRecordNotifier extends ChangeNotifier {
         }
         // ignore: empty_catches
       } catch (e) {}
-      notifyListeners();
+      update();
     }
   }
 
@@ -217,23 +226,24 @@ class SoundRecordNotifier extends ChangeNotifier {
       minute = minute + 1;
     }
 
-    notifyListeners();
+    update();
     loopActive = false;
-    notifyListeners();
+    update();
   }
 
   /// this function to start record voice
   record() async {
+    await startRecording();
     buttonPressed = true;
     // String recordFilePath = await getFilePath();
     // _timer = Timer(const Duration(milliseconds: 900), () {
     //   recordMp3.start(path: recordFilePath);
     // });
-    startRecording();
-    _mapCounterGenerater();
-    notifyListeners();
 
-    notifyListeners();
+    _mapCounterGenerater();
+    update();
+
+    update();
   }
 
   /// to check permission

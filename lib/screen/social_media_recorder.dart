@@ -2,6 +2,7 @@ library social_media_recorder;
 
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:social_media_recorder/provider/sound_record_notifier.dart';
 import 'package:social_media_recorder/widgets/lock_record.dart';
@@ -109,14 +110,12 @@ class _SocialMediaRecorder extends State<SocialMediaRecorder> {
 
   @override
   void initState() {
-    soundRecordNotifier = SoundRecordNotifier(
+    soundRecordNotifier = Get.put(SoundRecordNotifier(
       startRecording: widget.startRecording,
       stopRecording: widget.stopRecording,
       cancelEvent: widget.cancelEvent,
-    );
-    soundRecordNotifier.initialStorePathRecord = widget.storeSoundRecoringPath ?? "";
-    soundRecordNotifier.isShow = false;
-    soundRecordNotifier.voidInitialSound();
+    ));
+
     super.initState();
   }
 
@@ -127,15 +126,9 @@ class _SocialMediaRecorder extends State<SocialMediaRecorder> {
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-        providers: [
-          ChangeNotifierProvider(create: (context) => soundRecordNotifier),
-        ],
-        child: Consumer<SoundRecordNotifier>(
-          builder: (context, value, _) {
-            return Directionality(textDirection: TextDirection.rtl, child: makeBody(value));
-          },
-        ));
+    return GetBuilder<SoundRecordNotifier>(builder: (controller) {
+      return Directionality(textDirection: TextDirection.rtl, child: makeBody(controller));
+    });
   }
 
   Widget makeBody(SoundRecordNotifier state) {
