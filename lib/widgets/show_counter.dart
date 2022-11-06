@@ -19,7 +19,7 @@ class ShowCounter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Align(
-      alignment: Alignment.centerLeft,
+      alignment: Alignment.centerRight,
       child: Container(
         height: 50,
         width: MediaQuery.of(context).size.width * 0.4,

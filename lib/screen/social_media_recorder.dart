@@ -207,7 +207,7 @@ class _SocialMediaRecorder extends State<SocialMediaRecorder> {
                 ),
                 child: Stack(
                   children: [
-                    Center(
+                   if (!soundRecordNotifier.isShow) Center(
                         child: ShowMicWithText(
                       counterBackGroundColor: widget.counterBackGroundColor,
                       backGroundColor: widget.recordIconBackGroundColor,
