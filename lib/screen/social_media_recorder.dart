@@ -185,6 +185,10 @@ class _SocialMediaRecorder extends State<SocialMediaRecorder> {
               widget.sendRequestFunction(File.fromUri(Uri(path: path)));
             }
           }
+          if (state.second < 1) {
+            await Future.delayed(Duration(milliseconds: 1000));
+          }
+
           state.resetEdgePadding();
         }
       },
@@ -207,16 +211,17 @@ class _SocialMediaRecorder extends State<SocialMediaRecorder> {
                 ),
                 child: Stack(
                   children: [
-                   if (!soundRecordNotifier.isShow) Center(
-                        child: ShowMicWithText(
-                      counterBackGroundColor: widget.counterBackGroundColor,
-                      backGroundColor: widget.recordIconBackGroundColor,
-                      recordIcon: widget.recordIcon,
-                      shouldShowText: soundRecordNotifier.isShow,
-                      soundRecorderState: state,
-                      slideToCancelTextStyle: widget.slideToCancelTextStyle,
-                      slideToCancelText: widget.slideToCancelText,
-                    )),
+                    if (!soundRecordNotifier.isShow)
+                      Center(
+                          child: ShowMicWithText(
+                        counterBackGroundColor: widget.counterBackGroundColor,
+                        backGroundColor: widget.recordIconBackGroundColor,
+                        recordIcon: widget.recordIcon,
+                        shouldShowText: soundRecordNotifier.isShow,
+                        soundRecorderState: state,
+                        slideToCancelTextStyle: widget.slideToCancelTextStyle,
+                        slideToCancelText: widget.slideToCancelText,
+                      )),
                     if (soundRecordNotifier.isShow) ShowCounter(counterBackGroundColor: widget.counterBackGroundColor, soundRecorderState: state),
                   ],
                 ),
